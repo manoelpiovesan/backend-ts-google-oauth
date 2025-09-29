@@ -7,7 +7,6 @@ import {errorHandler} from "./middlewares/error_handler";
 import {configureSwagger} from './config/swagger';
 import {passportInitialize} from "./config/passport";
 import passport from "passport";
-import "./queues/workers/booking_worker";
 import { responseWrapper } from './middlewares/response_wrapper';
 
 const app: Application = express();
