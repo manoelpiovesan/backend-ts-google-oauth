@@ -1,3 +1,8 @@
+<div align="center">
+  <h1>Simple TSOA Backend</h1>
+  <p>A Node.js backend application with Google OAuth authentication and PostgreSQL database integration.</p>
+</div>
+
 ## Environment Variables
 
 | Variable             | Required | Description                       | Default      |
