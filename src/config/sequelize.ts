@@ -2,9 +2,9 @@ import { Sequelize } from 'sequelize-typescript';
 import path from 'path';
 
 const sequelize = new Sequelize({
-  database: process.env.POSTGRES_DB || 'busuerj',
-  username: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'postgres',
+  database: process.env.POSTGRES_DB || 'backend_node',
+  username: process.env.POSTGRES_USER || 'admin',
+  password: process.env.POSTGRES_PASSWORD || 'password',
   host: process.env.POSTGRES_HOST || 'localhost',
   port: Number(process.env.POSTGRES_PORT) || 5432,
   dialect: 'postgres',
@@ -22,4 +22,3 @@ export const initDb = async () => {
 };
 
 export { sequelize };
-export default { sequelize };

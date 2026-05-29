@@ -1,16 +1,9 @@
-export interface JWTUser {
-  id: number;
-  google_profile_id: string;
-  name: string;
-  email: string;
-  picture?: string;
-  role?: string;
-}
+import {APIUser} from "../models/user";
 
 declare global {
   namespace Express {
     interface Request {
-      jwt_user?: JWTUser;
+      jwt_user?: APIUser;
     }
   }
 }

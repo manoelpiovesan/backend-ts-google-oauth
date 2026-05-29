@@ -1,12 +1,12 @@
-import {Get, Query, Request, Route, Security, Tags} from 'tsoa';
-import {User} from "../models/User";
-import {InferAttributes, Op} from "sequelize";
-import {JWTUser} from "../types/declaration";
-import {AbstractController} from "./abstract.controller";
+import {Get, Queries, Request, Route, Security, Tags, Post, Controller, Body} from 'tsoa';
+import {APIUser} from "../models/user";
+import {DefaultSearchParams} from "../types/api_common_types";
+import {AuthRepository, AuthTokens} from "../repositories/auth.repository";
+import {UserRepository} from "../repositories/user.repository";
 
 @Route('users')
-@Tags('Usuários')
-export class UserController extends AbstractController<User> {
+@Tags('Users')
+export class UserController extends Controller {
 
   /**
    * Get current authenticated user
@@ -16,57 +16,41 @@ export class UserController extends AbstractController<User> {
   @Security('google-jwt')
   public async me(
     @Request() request: Express.Request,
-  ): Promise<JWTUser> {
+  ): Promise<APIUser> {
     return request.jwt_user!;
   }
 
   /**
-   * Get all users - For admin users only
+   * Refresh JWT token
    * @param request
-   * @param page
-   * @param size
-   * @param search
+   * @param refresh_token
+   */
+  @Post('refresh-token')
+  @Security('google-jwt')
+  public async refreshToken(
+    @Request() request: Express.Request,
+    @Body() refresh_token: string,
+  ): Promise<AuthTokens> {
+    const tokens = await AuthRepository.refreshToken(request.jwt_user!.id, refresh_token);
+
+    if(!tokens) {
+      this.setStatus(401);
+      return Promise.reject(new Error('Invalid or expired refresh token'));
+    }
+
+    return tokens;
+  }
+
+  /**
+   * Get all users - For admin users only
+   * @param params
    */
   @Get()
   @Security('google-jwt', ['admin'])
   public async getAll(
-    @Request() request: Express.Request,
-    @Query() page?: number,
-    @Query() size?: number,
-    @Query() search?: string,
-  ): Promise<InferAttributes<User>[]> {
-    const limit = size && size > 0 ? size : 10;
-    const offset = page && page > 0 ? (page - 1) * limit : 0;
-
-    const whereClause = search ? {
-      where: {
-        name: {
-          [Op.iLike]: `%${search}%`
-        },
-      }
-    } : {};
-    return await User.findAll({
-      ...whereClause,
-      limit,
-      offset,
-      order: [['id', 'ASC']],
-    });
-  }
-
-
-  // We won't implement these methods for now, but they are required by the abstract class.
-  getById(request: Express.Request, id: number): Promise<InferAttributes<User>> {
-    throw new Error('Method not implemented.');
-  }
-
-  // Users only created via Google OAuth, so we won't implement this method.
-  create(request: Express.Request, body: InferAttributes<any>): Promise<InferAttributes<User>> {
-    throw new Error('Method not implemented.');
-  }
-
-  // The same.
-  delete(request: Express.Request, id: number): Promise<any> {
-    return Promise.resolve(undefined);
+    @Queries() params: DefaultSearchParams
+  ): Promise<APIUser[]> {
+    return UserRepository.findAll(params);
   }
 
 }

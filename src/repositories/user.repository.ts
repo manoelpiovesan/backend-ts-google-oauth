@@ -1,48 +1,51 @@
-import {User} from "../models/User";
-import {InferAttributes} from "sequelize";
-import {UserCreationAttributes} from "../config/passport";
+import {APIUser, APIUserCreate, User} from "../models/user";
+import {DefaultSearchParams} from "../types/api_common_types";
+import {Op} from "sequelize";
 
-class UserRepository {
+export class UserRepository {
 
   /**
-   * User from JWT payload
+   * Get All users with pagination and optional search by name. For admin users only.
+   * @param params
    */
-  static async getUserFromRequest(request: Express.Request): Promise<User | null> {
-    const jwt_user = request.jwt_user;
-    if (!jwt_user) {
-      return null;
-    }
-    return await User.findOne({where: {google_profile_id: jwt_user.google_profile_id}});
+  static async findAll(params: DefaultSearchParams): Promise<APIUser[]> {
+    return await User.findAll(
+      {
+        where: params.search ? {
+          name: {
+            [Op.iLike]: `%${params.search}%`
+          },
+        } : {},
+        limit: params.size && params.size > 0 ? params.size : 10,
+        offset: params.page && params.page > 0 ? (params.page - 1) *
+          (params.size && params.size > 0 ? params.size : 10) : 0,
+        order: [['id', 'ASC']],
+      }
+    );
   }
 
   /**
    * Creates a new user if one with the given email does not already exist.
+   * @param data
    */
-  static async createIfNotExists(userData: UserCreationAttributes): Promise<InferAttributes<User>> {
+  static async createIfNotExists(data: APIUserCreate): Promise<APIUser> {
 
-    let user = await User.findOne({where: {email: userData.email}});
+    let user = await User.findOne({where: {google_profile_id: data.google_profile_id}});
 
     if (user) {
       return user;
     }
 
-    const newUser = new User();
-    newUser.name = userData.name;
-    newUser.email = userData.email;
-    newUser.picture = userData.picture;
-    newUser.google_profile_id = userData.google_profile_id;
-    newUser.role = 'user';
+    const is_first_user = await User.count() === 0;
 
     // If this is the first user, make them an admin
-    if(await User.count() === 0) {
-      newUser.role = 'admin';
-      console.log('[INFO] First user created, assigning admin role:', newUser.email);
+    if (is_first_user) {
+      console.log('[INFO] First user created. Granting admin role.');
     }
 
-    return await newUser.save();
+    return await User.create({...data, role: is_first_user ? 'admin' : 'user'});
   }
+
 
 }
 
-export const userService = new UserRepository();
-export { UserRepository };
