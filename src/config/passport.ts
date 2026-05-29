@@ -1,15 +1,9 @@
-import passport, { Profile } from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import passport, {Profile} from 'passport';
+import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 import jwt from 'jsonwebtoken';
 import {UserRepository} from "../repositories/user.repository";
-
-export type UserCreationAttributes = {
-  google_profile_id: string;
-  email: string;
-  name: string;
-  picture?: string;
-  role?: 'user' | 'admin';
-}
+import {APIUserCreate} from "../models/user";
+import {AuthRepository} from "../repositories/auth.repository";
 
 passport.use(new GoogleStrategy(
   {
@@ -19,26 +13,22 @@ passport.use(new GoogleStrategy(
   },
   async (accessToken, refreshToken, profile: Profile, done) => {
     try {
-      const userCreateParams: UserCreationAttributes = {
+      const user_data: APIUserCreate = {
         google_profile_id: profile.id,
         email: profile.emails?.[0].value || '',
         name: profile.displayName,
         picture: profile.photos?.[0].value,
       }
 
-      let user = await UserRepository.createIfNotExists(userCreateParams);
+      if (!user_data.email) {
+        return done(new Error('[ERROR] Missing E-mail on Google Profile'), false);
+      }
 
-      const token = jwt.sign({
-        id: user.id,
-        google_profile_id: user.google_profile_id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        picture: user.picture,
-      }, process.env.JWT_SECRET!, { expiresIn: '8h' });
+      const user = await UserRepository.createIfNotExists(user_data);
 
+      const tokens = await AuthRepository.generateAuthTokens(user);
 
-      return done(null, { ...userCreateParams, token });
+      return done(null, {...user_data, ...tokens});
     } catch (err) {
       return done(err, false);
     }
