@@ -1,4 +1,4 @@
-import {APIUser} from "../models/user";
+import {APIUser} from "./api/user_types";
 
 declare global {
   namespace Express {

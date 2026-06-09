@@ -1,6 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import {APIUser} from "../models/user";
+import {APIUser} from "../types/api/user_types";
 
 /**
  * Authentication middleware for Express applications.
