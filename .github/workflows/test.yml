@@ -39,7 +39,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Build TSOA routes
         run: npm run build
