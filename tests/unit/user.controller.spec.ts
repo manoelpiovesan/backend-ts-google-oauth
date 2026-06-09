@@ -13,7 +13,7 @@ describe('UserController', () => {
         jest.clearAllMocks();
     });
 
-    it('me() should return current user', async () => {
+    it('me() should return current user.', async () => {
         const req = { jwt_user: { id: '1', name: 'Alice' } } as any;
         const result = await controller.me(req);
         expect(result).toEqual(req.jwt_user);
@@ -22,7 +22,7 @@ describe('UserController', () => {
     it('refreshToken() should return tokens on valid refresh token', async () => {
         const req = { jwt_user: { id: '1', name: 'Alice' } } as any;
         const tokens = { access_token: '123', refresh_token: '456' };
-        
+
         (AuthRepository.refreshToken as jest.Mock).mockResolvedValue(tokens);
 
         const result = await controller.refreshToken(req, 'valid-token');
