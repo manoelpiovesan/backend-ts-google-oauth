@@ -1,6 +1,6 @@
 {
   "name": "backend-node-google-auth",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/src/server.js",
   "scripts": {
