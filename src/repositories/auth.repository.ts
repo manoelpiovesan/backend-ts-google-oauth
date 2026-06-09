@@ -3,11 +3,7 @@ import jwt from "jsonwebtoken";
 import {RefreshToken} from "../models/refresh_token";
 import {Op} from "sequelize";
 import {APIUser} from "../types/api/user_types";
-
-export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-}
+import {AuthTokens} from "../types/api/auth_types";
 
 export class AuthRepository {
 

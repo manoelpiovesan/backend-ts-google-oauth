@@ -1,8 +1,9 @@
 import {Get, Queries, Request, Route, Security, Tags, Post, Controller, Body} from 'tsoa';
 import {DefaultSearchParams} from "../types/api/search_types";
-import {AuthRepository, AuthTokens} from "../repositories/auth.repository";
+import {AuthRepository} from "../repositories/auth.repository";
 import {UserRepository} from "../repositories/user.repository";
 import {APIUser} from "../types/api/user_types";
+import {AuthTokens} from "../types/api/auth_types";
 
 @Route('users')
 @Tags('Users')

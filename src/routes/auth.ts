@@ -1,6 +1,6 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
-import {AuthTokens} from "../repositories/auth.repository";
+import {AuthTokens} from "../types/api/auth_types";
 
 const router = Router();
 
