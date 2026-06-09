@@ -1,19 +1,17 @@
 import {Sequelize} from 'sequelize-typescript';
 import path from 'path';
 
-const sequelize = new Sequelize({
-  database: process.env.POSTGRES_DB || 'backend_node',
-  username: process.env.POSTGRES_USER || 'admin',
-  password: process.env.POSTGRES_PASSWORD || 'password',
-  host: process.env.POSTGRES_HOST || 'localhost',
-  port: Number(process.env.POSTGRES_PORT) || 5432,
-  dialect: 'postgres',
-  models: [path.join(__dirname, '../models')],
-  modelMatch: (filename, member) => {
-    return member !== 'default';
-  },
-  logging: false,
-});
+const sequelize = new Sequelize(
+  process.env.DATABASE_URL || 'postgres://admin:password@localhost:5432/backend_node',
+  {
+    dialect: process.env.DATABASE_DIALECT as any || 'postgres',
+    models: [path.join(__dirname, '../models')],
+    modelMatch: (filename, member) => {
+      return member !== 'default';
+    },
+    logging: false,
+  }
+);
 
 export const initDb = async () => {
   try {

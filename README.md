@@ -5,18 +5,15 @@
 
 ## Environment Variables
 
-| Variable             | Required | Description                       | Default      |
-|----------------------|----------|-----------------------------------|--------------|
-| POSTGRES_DB          | No       | PostgreSQL database name          | backend_node |
-| POSTGRES_USER        | No       | PostgreSQL database user          | admin        |
-| POSTGRES_PASSWORD    | No       | PostgreSQL database password      | password     |
-| POSTGRES_HOST        | No       | PostgreSQL database host          | localhost    |
-| POSTGRES_PORT        | No       | PostgreSQL database port          | 5432         |
-| GOOGLE_CLIENT_ID     | Yes      | Google OAuth client ID            |              |
-| GOOGLE_CLIENT_SECRET | Yes      | Google OAuth client secret        |              |
-| GOOGLE_CALLBACK_URL  | Yes      | Google OAuth callback URL         |              |
-| AUTH_REDIRECT_URL    | Yes      | Redirect URL after authentication |              |
-| JWT_SECRET           | Yes      | Secret for signing JWT tokens     |              |
+| Variable             | Required | Description                       | Default                                               |
+|----------------------|----------|-----------------------------------|-------------------------------------------------------|
+| DATABASE_URL         | No       | SQL Database URL                  | postgres://admin:password@localhost:5432/backend_node |
+| DATABASE_DIALECT     | No       | Database dialect                  | postgres                                              |
+| GOOGLE_CLIENT_ID     | Yes      | Google OAuth client ID            |                                                       |
+| GOOGLE_CLIENT_SECRET | Yes      | Google OAuth client secret        |                                                       |
+| GOOGLE_CALLBACK_URL  | Yes      | Google OAuth callback URL         |                                                       |
+| AUTH_REDIRECT_URL    | Yes      | Redirect URL after authentication |                                                       |
+| JWT_SECRET           | Yes      | Secret for signing JWT tokens     |                                                       |
 
 ## Running the Application
 
