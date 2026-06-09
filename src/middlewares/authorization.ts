@@ -45,22 +45,22 @@ export async function expressAuthentication(
 
 }
 
-/**
- * Express middleware wrapper for authentication
- * @param req Express request object
- * @param res Express response object
- * @param next Express next function
- * @returns void
- */
-export const authMiddleware = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  expressAuthentication(req, 'google-jwt')
-    .then(() => next())
-    .catch((err) => {
-      res.status(401).json({ error: err.message || 'Unauthorized' });
-    });
-};
+// /**
+//  * Express middleware wrapper for authentication
+//  * @param req Express request object
+//  * @param res Express response object
+//  * @param next Express next function
+//  * @returns void
+//  */
+// export const authMiddleware = (
+//   req: express.Request,
+//   res: express.Response,
+//   next: express.NextFunction
+// ) => {
+//   expressAuthentication(req, 'google-jwt')
+//     .then(() => next())
+//     .catch((err) => {
+//       res.status(401).json({ error: err.message || 'Unauthorized' });
+//     });
+// };
 
