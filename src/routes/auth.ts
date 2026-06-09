@@ -1,6 +1,5 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
-import {APIUser} from "../models/user";
 import {AuthTokens} from "../repositories/auth.repository";
 
 const router = Router();
@@ -18,12 +17,12 @@ router.get('/api/v1/auth/google', passport.authenticate('google', {scope: ['prof
  * frontend with a JWT token.
  */
 router.get('/api/v1/auth/google/callback', (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('google', {session: false}, (err, data: APIUser & AuthTokens) => {
-    if (err || !data) {
+  passport.authenticate('google', {session: false}, (err, tokens: AuthTokens) => {
+    if (err || !tokens) {
       console.error('Authentication error:', err);
       return res.redirect(`${process.env.AUTH_REDIRECT_URL}?error=1`);
     }
-    return res.redirect(`${process.env.AUTH_REDIRECT_URL}?access_token=${data.access_token}`);
+    return res.redirect(`${process.env.AUTH_REDIRECT_URL}?access_token=${tokens.access_token}`);
   })(req, res, next);
 });
 

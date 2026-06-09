@@ -1,6 +1,7 @@
-import {APIUser, APIUserCreate, User} from "../models/user";
-import {DefaultSearchParams} from "../types/api_common_types";
+import { User} from "../models/user";
+import {DefaultSearchParams} from "../types/api/search_types";
 import {Op} from "sequelize";
+import {APIUser, APIUserCreate} from "../types/api/user_types";
 
 export class UserRepository {
 
@@ -28,22 +29,27 @@ export class UserRepository {
    * Creates a new user if one with the given email does not already exist.
    * @param data
    */
-  static async createIfNotExists(data: APIUserCreate): Promise<APIUser> {
+  static async createIfNotExists(data: APIUserCreate): Promise<User | null> {
 
-    let user = await User.findOne({where: {google_profile_id: data.google_profile_id}});
+    try {
+      let user = await User.findOne({where: {google_profile_id: data.google_profile_id}});
 
-    if (user) {
-      return user;
+      if (user) {
+        return user;
+      }
+
+      return await User.create({...data, role: 'user'});
+    } catch (error) {
+      const is_first_user = await User.count() === 0;
+
+      // If this is the first user, make them an admin.
+      if (is_first_user) {
+        console.log('[INFO] First user created. Granting admin role.');
+        return await User.create({...data, role: 'admin'});
+      }
+
+      return null;
     }
-
-    const is_first_user = await User.count() === 0;
-
-    // If this is the first user, make them an admin
-    if (is_first_user) {
-      console.log('[INFO] First user created. Granting admin role.');
-    }
-
-    return await User.create({...data, role: is_first_user ? 'admin' : 'user'});
   }
 
 

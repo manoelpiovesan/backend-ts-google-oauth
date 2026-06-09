@@ -1,7 +1,6 @@
 import {Table, Column, DataType, Model, PrimaryKey} from 'sequelize-typescript';
 import {CreationOptional, InferAttributes, InferCreationAttributes} from 'sequelize';
 
-
 @Table({tableName: 'users'})
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 
@@ -44,18 +43,6 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   })
   role?: CreationOptional<string>;
 
-}
-
-export interface APIUserCreate {
-  google_profile_id: string;
-  name: string;
-  email: string;
-  picture?: string;
-  role?: string;
-}
-
-export interface APIUser extends APIUserCreate {
-  id: string;
 }
 
 

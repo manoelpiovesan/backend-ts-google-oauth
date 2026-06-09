@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript';
+import {Sequelize} from 'sequelize-typescript';
 import path from 'path';
 
 const sequelize = new Sequelize({
@@ -9,6 +9,9 @@ const sequelize = new Sequelize({
   port: Number(process.env.POSTGRES_PORT) || 5432,
   dialect: 'postgres',
   models: [path.join(__dirname, '../models')],
+  modelMatch: (filename, member) => {
+    return member !== 'default';
+  },
   logging: false,
 });
 
@@ -21,4 +24,4 @@ export const initDb = async () => {
   }
 };
 
-export { sequelize };
+export {sequelize};

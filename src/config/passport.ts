@@ -1,9 +1,8 @@
 import passport, {Profile} from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
-import jwt from 'jsonwebtoken';
 import {UserRepository} from "../repositories/user.repository";
-import {APIUserCreate} from "../models/user";
 import {AuthRepository} from "../repositories/auth.repository";
+import {APIUserCreate} from "../types/api/user_types";
 
 passport.use(new GoogleStrategy(
   {
@@ -26,9 +25,13 @@ passport.use(new GoogleStrategy(
 
       const user = await UserRepository.createIfNotExists(user_data);
 
+      if(!user) {
+        return done(new Error('[ERROR] Failed to create or find user'), false);
+      }
+
       const tokens = await AuthRepository.generateAuthTokens(user);
 
-      return done(null, {...user_data, ...tokens});
+      return done(null, tokens);
     } catch (err) {
       return done(err, false);
     }
